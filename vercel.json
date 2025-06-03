@@ -1,24 +1,12 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "api/index.php",
-            "use": "vercel-php@0.6.0"
-        },
-        {
-            "src": "public/**",
-            "use": "@vercel/static"
+    "functions": {
+        "api/index.php": {
+            "runtime": "vercel-php@0.7.3",
+            "maxDuration": 30
         }
-    ],
+    },
     "routes": [
-        {
-            "src": "/favicon.ico",
-            "dest": "/public/favicon.ico"
-        },
-        {
-            "src": "/robots.txt",
-            "dest": "/public/robots.txt"
-        },
         {
             "src": "/build/(.*)",
             "dest": "/public/build/$1"
@@ -36,10 +24,6 @@
             "dest": "/public/images/$1"
         },
         {
-            "src": "/storage/(.*)",
-            "dest": "/public/storage/$1"
-        },
-        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
@@ -47,8 +31,20 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
-        "LOG_LEVEL": "error",
-        "SESSION_DRIVER": "file",
-        "CACHE_STORE": "file"
+        "APP_CONFIG_CACHE": "/tmp/config.php",
+        "APP_EVENTS_CACHE": "/tmp/events.php",
+        "APP_PACKAGES_CACHE": "/tmp/packages.php",
+        "APP_ROUTES_CACHE": "/tmp/routes.php",
+        "APP_SERVICES_CACHE": "/tmp/services.php",
+        "VIEW_COMPILED_PATH": "/tmp",
+        "APP_LOG_LEVEL": "error",
+        "CACHE_DRIVER": "array",
+        "LOG_CHANNEL": "stderr",
+        "SESSION_DRIVER": "cookie"
+    },
+    "build": {
+        "env": {
+            "COMPOSER_FLAGS": "--no-dev"
+        }
     }
 }

@@ -83,9 +83,9 @@
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Kontak</h4>
                     <div class="space-y-2 text-gray-400">
-                        <p><i class="fas fa-phone mr-2"></i> +62 813-8389-4808</p>
-                        <p><i class="fas fa-envelope mr-2"></i> zenteradigital@gmail.com</p>
-                        <p><i class="fab fa-whatsapp mr-2"></i> WhatsApp: +62 813-8389-4808</p>
+                        <p><i class="fas fa-phone mr-2"></i> +62 813-3005-3572</p>
+                        <p><i class="fas fa-envelope mr-2"></i> zenteradigital.id@gmail.com</p>
+                        <p><i class="fab fa-whatsapp mr-2"></i> WhatsApp: +62 813-3005-3572</p>
                     </div>
                 </div>
             </div>

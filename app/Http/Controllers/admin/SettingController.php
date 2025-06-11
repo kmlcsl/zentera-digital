@@ -30,7 +30,7 @@ class SettingController extends Controller
 
             // Fallback to default values if not in database
             $defaultSettings = [
-                'whatsapp_number' => '6281383894808',
+                'whatsapp_number' => '6281330053572',
                 'business_name' => 'Zentera Digital',
                 'business_email' => 'info@digitalproservices.com',
                 'business_address' => 'Medan, North Sumatra, Indonesia',
@@ -405,7 +405,7 @@ class SettingController extends Controller
         }
 
         try {
-            $whatsappNumber = Setting::get('whatsapp_number', '6281383894808');
+            $whatsappNumber = Setting::get('whatsapp_number', '6281330053572');
             $message = "Test message dari sistem admin Zentera Digital pada " . date('Y-m-d H:i:s');
 
             $whatsappUrl = "https://wa.me/{$whatsappNumber}?text=" . urlencode($message);
@@ -504,7 +504,7 @@ class SettingController extends Controller
         try {
             // Default settings
             $defaultSettings = [
-                'whatsapp_number' => ['value' => '6281383894808', 'type' => 'text', 'group' => 'business'],
+                'whatsapp_number' => ['value' => '6281330053572', 'type' => 'text', 'group' => 'business'],
                 'business_name' => ['value' => 'Zentera Digital', 'type' => 'text', 'group' => 'business'],
                 'business_email' => ['value' => 'info@digitalproservices.com', 'type' => 'text', 'group' => 'business'],
                 'business_address' => ['value' => 'Medan, North Sumatra, Indonesia', 'type' => 'text', 'group' => 'business'],

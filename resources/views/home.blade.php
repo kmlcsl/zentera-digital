@@ -26,7 +26,7 @@
                     <a href="{{ route('products') }}" class="bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 hover-glow">
                         <i class="fas fa-rocket mr-2"></i>Lihat Layanan
                     </a>
-                    <a href="https://wa.me/6281383894808" target="_blank" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300">
+                    <a href="https://wa.me/6281330053572" target="_blank" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300">
                         <i class="fab fa-whatsapp mr-2"></i>Konsultasi Gratis
                     </a>
                 </div>
@@ -117,7 +117,7 @@
             <a href="{{ route('products') }}" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-10 py-4 rounded-full font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300 hover-glow">
                 <i class="fas fa-shopping-cart mr-2"></i>Pilih Layanan
             </a>
-            <a href="https://wa.me/6281383894808" target="_blank" class="bg-green-500 text-white px-10 py-4 rounded-full font-semibold hover:bg-green-600 transition-all duration-300 hover-glow">
+            <a href="https://wa.me/6281330053572" target="_blank" class="bg-green-500 text-white px-10 py-4 rounded-full font-semibold hover:bg-green-600 transition-all duration-300 hover-glow">
                 <i class="fab fa-whatsapp mr-2"></i>Chat WhatsApp
             </a>
         </div>

@@ -12,7 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $whatsappNumber = config('app.whatsapp_number', '6281383894808');
+        $whatsappNumber = config('app.whatsapp_number', '6281330053572');
 
         // Ambil produk dari database, dikelompokkan berdasarkan kategori
         $products = [

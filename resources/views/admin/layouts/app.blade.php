@@ -154,7 +154,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://wa.me/{{ config('app.whatsapp_number', '6281383894808') }}" target="_blank"
+                            <a href="https://wa.me/{{ config('app.whatsapp_number', '6281330053572') }}" target="_blank"
                                 class="flex items-center px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                                 <i class="fab fa-whatsapp mr-3 text-sm w-5"></i>
                                 <span class="text-sm">WhatsApp</span>

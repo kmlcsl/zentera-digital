@@ -30,7 +30,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'whatsapp_number',
-                'value' => '6281383894808',
+                'value' => '6281330053572',
                 'type' => 'text',
                 'group' => 'business',
                 'description' => 'Nomor WhatsApp bisnis'

@@ -82,7 +82,7 @@ class Product extends Model
      */
     public function getWhatsappUrlAttribute()
     {
-        $whatsappNumber = config('app.whatsapp_number', '6281383894808');
+        $whatsappNumber = config('app.whatsapp_number', '6281330053572');
 
         // Default text jika whatsapp_text kosong
         $text = $this->whatsapp_text ?: "Halo, saya tertarik dengan layanan {$this->name}. Bisa info lebih detail?";

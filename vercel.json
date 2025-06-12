@@ -24,6 +24,10 @@
             "dest": "/public/images/$1"
         },
         {
+            "src": "/storage/(.*)",
+            "dest": "/api/index.php"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }

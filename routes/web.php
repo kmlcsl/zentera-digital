@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
@@ -56,7 +56,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         return view('admin.auth.login');
     })->name('login');
 
-    Route::post('login', function (Request $request) {
+    Route::post('login', function (Illuminate\Http\Request $request) {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
@@ -67,12 +67,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->where('is_active', true)
                 ->first();
 
-            if ($admin && Hash::check($request->password, $admin->password)) {
-                Session::put('admin_logged_in', true);
-                Session::put('admin_id', $admin->id);
-                Session::put('admin_name', $admin->name);
-                Session::put('admin_email', $admin->email);
-                Session::put('admin_role', $admin->role);
+            if ($admin && Illuminate\Support\Facades\Hash::check($request->password, $admin->password)) {
+                Illuminate\Support\Facades\Session::put('admin_logged_in', true);
+                Illuminate\Support\Facades\Session::put('admin_id', $admin->id);
+                Illuminate\Support\Facades\Session::put('admin_name', $admin->name);
+                Illuminate\Support\Facades\Session::put('admin_email', $admin->email);
+                Illuminate\Support\Facades\Session::put('admin_role', $admin->role);
 
                 $admin->updateLastLogin($request->ip());
 
@@ -83,7 +83,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             return back()->withErrors(['login' => 'Email atau password salah!'])
                 ->withInput($request->only('email'));
         } catch (\Exception $e) {
-            return back()->withErrors(['login' => 'Terjadi kesalahan sistem.']);
+            return back()->withErrors(['login' => 'Terjadi kesalahan sistem: ' . $e->getMessage()]);
         }
     });
 

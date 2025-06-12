@@ -72,9 +72,10 @@
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
     },
-    "build": {
-        "env": {
-            "COMPOSER_FLAGS": "--no-dev --optimize-autoloader --classmap-authoritative"
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php@0.7.3"
         }
-    }
+    ]
 }

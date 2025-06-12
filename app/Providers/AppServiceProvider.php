@@ -10,77 +10,76 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot()
     {
-        // Force HTTPS untuk production
-        if (config('app.env') === 'production' || request()->header('x-forwarded-proto') === 'https') {
-            URL::forceScheme('https');
-            $this->app['request']->server->set('HTTPS', true);
-        }
+        try {
+            // Force HTTPS untuk production
+            if (config('app.env') === 'production' || request()->header('x-forwarded-proto') === 'https') {
+                URL::forceScheme('https');
+                $this->app['request']->server->set('HTTPS', true);
+            }
 
-        // Pastikan storage link terbuat di production
-        if (config('app.env') === 'production') {
-            $this->ensureStorageLink();
-        }
+            // Pastikan storage link terbuat di production
+            if (config('app.env') === 'production') {
+                $this->ensureStorageLink();
+            }
 
-        // View composer untuk admin layout
-        View::composer('admin.layouts.app', function ($view) {
-            try {
-                // Pastikan tabel orders ada
-                if (Schema::hasTable('orders')) {
-                    $pendingOrders = \App\Models\Order::where('payment_status', 'pending')->count();
-                } else {
+            // View composer untuk admin layout
+            View::composer('admin.layouts.app', function ($view) {
+                try {
+                    if (Schema::hasTable('orders')) {
+                        $pendingOrders = \App\Models\Order::where('payment_status', 'pending')->count();
+                    } else {
+                        $pendingOrders = 0;
+                    }
+                } catch (\Exception $e) {
+                    Log::error('Error in View Composer: ' . $e->getMessage());
                     $pendingOrders = 0;
                 }
-            } catch (\Exception $e) {
-                $pendingOrders = 0;
-            }
-            $view->with('pendingOrdersCount', $pendingOrders);
-        });
+                $view->with('pendingOrdersCount', $pendingOrders);
+            });
+        } catch (\Exception $e) {
+            Log::error('AppServiceProvider boot error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+        }
     }
 
-    /**
-     * Ensure storage symlink exists
-     */
     private function ensureStorageLink()
     {
         try {
+            Log::info('Attempting to create storage link...');
+
             $target = storage_path('app/public');
             $link = public_path('storage');
 
-            // Check jika symlink belum ada atau broken
-            if (!file_exists($link) || !is_link($link)) {
-                // Hapus jika ada file/folder dengan nama storage
-                if (file_exists($link) && !is_link($link)) {
-                    if (is_dir($link)) {
-                        rmdir($link);
-                    } else {
-                        unlink($link);
-                    }
+            Log::info("Target: $target, Link: $link");
+
+            if (!file_exists($link)) {
+                // Coba buat directory storage/app/public jika belum ada
+                if (!file_exists($target)) {
+                    mkdir($target, 0755, true);
+                    Log::info('Created target directory: ' . $target);
                 }
 
                 // Buat symlink
                 if (function_exists('symlink')) {
-                    symlink($target, $link);
+                    $result = symlink($target, $link);
+                    Log::info('Symlink created: ' . ($result ? 'success' : 'failed'));
                 } else {
-                    // Fallback jika symlink tidak tersedia
                     $this->app->make('files')->link($target, $link);
+                    Log::info('File link created via Laravel Files');
                 }
+            } else {
+                Log::info('Storage link already exists');
             }
         } catch (\Exception $e) {
-            // Log error tapi jangan break aplikasi
-            Log::warning('Failed to create storage symlink: ' . $e->getMessage());
+            Log::error('Storage link creation failed: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
         }
     }
 }

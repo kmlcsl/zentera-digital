@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
@@ -41,17 +44,65 @@ Route::prefix('payment')->name('payment.')->group(function () {
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Auth Routes (Login/Logout)
-    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    // Login Form
+    Route::get('login', function () {
+        return view('admin.auth.login');
+    })->name('login');
 
-    // Protected Admin Routes
+    // Login Process
+    Route::post('login', function (Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        try {
+            $admin = \App\Models\AdminUser::where('email', $request->email)
+                ->where('is_active', true)
+                ->first();
+
+            if ($admin && Hash::check($request->password, $admin->password)) {
+                Session::put('admin_logged_in', true);
+                Session::put('admin_id', $admin->id);
+                Session::put('admin_name', $admin->name);
+                Session::put('admin_email', $admin->email);
+                Session::put('admin_role', $admin->role);
+
+                $admin->updateLastLogin($request->ip());
+
+                return redirect()->route('admin.dashboard')
+                    ->with('success', 'Login berhasil! Selamat datang ' . $admin->name);
+            }
+
+            return back()->withErrors(['login' => 'Email atau password salah!'])
+                ->withInput($request->only('email'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['login' => 'Error: ' . $e->getMessage()]);
+        }
+    });
+
+    // Logout
+    Route::post('logout', function () {
+        Session::forget(['admin_logged_in', 'admin_id', 'admin_name', 'admin_email', 'admin_role']);
+        return redirect()->route('admin.login')->with('success', 'Logout berhasil!');
+    })->name('logout');
+
+    // Protected routes
     Route::middleware(['admin'])->group(function () {
 
         // Dashboard
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('dashboard', [DashboardController::class, 'index']);
+        Route::get('/', function () {
+            $stats = ['total_orders' => 0, 'pending_orders' => 0, 'monthly_revenue' => 0, 'weekly_orders' => 0];
+            $recent_orders = [];
+            $monthly_chart_data = ['labels' => [], 'revenue' => [], 'orders' => []];
+            $adminName = Session::get('admin_name', 'Admin');
+
+            return view('admin.dashboard', compact('stats', 'recent_orders', 'monthly_chart_data', 'adminName'));
+        })->name('dashboard');
+
+        Route::get('dashboard', function () {
+            return redirect()->route('admin.dashboard');
+        });
 
         // Products Management
         Route::prefix('products')->name('products.')->group(function () {

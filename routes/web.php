@@ -225,3 +225,46 @@ Route::get('/debug-admin', function () {
         'debug_time' => now()->toDateTimeString(),
     ];
 });
+
+
+Route::get('/debug-error', function () {
+    $errors = [];
+
+    // Test controller
+    try {
+        $controller = app(\App\Http\Controllers\Admin\AuthController::class);
+    } catch (Exception $e) {
+        $errors['controller_error'] = $e->getMessage();
+    }
+
+    // Test admin guard
+    try {
+        $guard = auth('admin');
+    } catch (Exception $e) {
+        $errors['auth_guard_error'] = $e->getMessage();
+    }
+
+    // Test session
+    try {
+        session()->put('test', 'value');
+        session()->get('test');
+    } catch (Exception $e) {
+        $errors['session_error'] = $e->getMessage();
+    }
+
+    // Check recent logs
+    $logFile = storage_path('logs/laravel.log');
+    $recentLogs = '';
+    if (file_exists($logFile)) {
+        $logs = file($logFile);
+        $recentLogs = implode('', array_slice($logs, -10)); // Last 10 lines
+    }
+
+    return [
+        'errors' => $errors,
+        'recent_logs' => $recentLogs,
+        'controller_path' => app_path('Http/Controllers/Admin/AuthController.php'),
+        'controller_file_exists' => file_exists(app_path('Http/Controllers/Admin/AuthController.php')),
+        'auth_config' => config('auth'),
+    ];
+});

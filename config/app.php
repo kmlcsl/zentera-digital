@@ -40,7 +40,8 @@ return [
     */
 
     // 'debug' => (bool) env('APP_DEBUG', false),
-    'debug' => env('APP_DEBUG', false) || (env('VERCEL_ENV') && env('APP_ENV') !== 'production'),
+    // 'debug' => env('APP_DEBUG', false) || (env('VERCEL_ENV') && env('APP_ENV') !== 'production'),
+    'debug' => true,
 
     /*
     |--------------------------------------------------------------------------

@@ -59,21 +59,22 @@
     ],
     "env": {
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
         "APP_ROUTES_CACHE": "/tmp/routes.php",
         "APP_SERVICES_CACHE": "/tmp/services.php",
         "VIEW_COMPILED_PATH": "/tmp",
-        "APP_LOG_LEVEL": "error",
-        "CACHE_DRIVER": "array",
+        "APP_LOG_LEVEL": "debug",
+        "CACHE_DRIVER": "file",
+        "CACHE_PATH": "/tmp/cache",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie"
     },
     "build": {
         "env": {
-            "COMPOSER_FLAGS": "--no-dev --optimize-autoloader"
+            "COMPOSER_FLAGS": "--no-dev --optimize-autoloader --classmap-authoritative"
         }
     }
 }

@@ -183,3 +183,13 @@ Route::get('/admin/debug-login', function () {
         ], 500);
     }
 });
+
+// Temporary debug route
+Route::get('/debug-admin', function () {
+    return [
+        'controller_exists' => class_exists(\App\Http\Controllers\Admin\AuthController::class),
+        'view_exists' => view()->exists('admin.auth.login'),
+        'session_driver' => config('session.driver'),
+        'app_env' => app()->environment(),
+    ];
+});

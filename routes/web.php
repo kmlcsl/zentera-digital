@@ -95,8 +95,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected routes tetap sama...
     Route::middleware(['admin'])->group(function () {
         // Dashboard
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('dashboard', [DashboardController::class, 'index']);
+        Route::get('/', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+
+        Route::get('dashboard', function () {
+            return view('admin.dashboard');
+        });
 
         // Quick Access Routes (untuk compatibility)
         Route::get('products', [AdminProductController::class, 'index'])->name('products');

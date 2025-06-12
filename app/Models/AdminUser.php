@@ -3,22 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
-class AdminUser extends Authenticatable
+class AdminUser extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'username',
-        'email',
         'name',
+        'email',
         'password',
         'role',
         'is_active',
         'last_login_at',
-        'last_login_ip'
+        'last_login_ip',
     ];
 
     protected $hidden = [
@@ -27,33 +26,17 @@ class AdminUser extends Authenticatable
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
-        'last_login_at' => 'datetime',
         'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'is_active' => 'boolean',
     ];
 
     /**
-     * Hash password when setting
+     * Set password attribute
      */
-    public function setPasswordAttribute($password)
+    public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = Hash::make($password);
-    }
-
-    /**
-     * Check if admin is active
-     */
-    public function isActive()
-    {
-        return $this->is_active;
-    }
-
-    /**
-     * Get admin role
-     */
-    public function getRole()
-    {
-        return $this->role;
+        $this->attributes['password'] = Hash::make($value);
     }
 
     /**
@@ -63,7 +46,23 @@ class AdminUser extends Authenticatable
     {
         $this->update([
             'last_login_at' => now(),
-            'last_login_ip' => $ip ?? request()->ip()
+            'last_login_ip' => $ip ?? request()->ip(),
         ]);
+    }
+
+    /**
+     * Check if admin is super admin
+     */
+    public function isSuperAdmin()
+    {
+        return $this->role === 'super_admin';
+    }
+
+    /**
+     * Scope for active admins
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

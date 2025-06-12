@@ -126,3 +126,46 @@ Route::get('/storage/{path}', function ($path) {
 Route::fallback(function () {
     return redirect()->route('home');
 });
+
+// Debug route - TEMPORARY
+Route::get('/debug-vercel', function () {
+    try {
+        return [
+            'status' => 'OK',
+            'timestamp' => now(),
+            'app_env' => app()->environment(),
+            'debug' => config('app.debug'),
+            'session_driver' => config('session.driver'),
+            'controllers' => [
+                'AuthController' => class_exists(\App\Http\Controllers\Admin\AuthController::class),
+                'DashboardController' => class_exists(\App\Http\Controllers\Admin\DashboardController::class),
+            ],
+            'views' => [
+                'admin_login' => view()->exists('admin.auth.login'),
+                'admin_dashboard' => view()->exists('admin.dashboard'),
+            ],
+            'memory_usage' => memory_get_usage(true),
+            'memory_peak' => memory_get_peak_usage(true),
+        ];
+    } catch (\Exception $e) {
+        return [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ];
+    }
+});
+
+// Simple debug admin login
+Route::get('/admin/debug-login', function () {
+    try {
+        return view('admin.auth.login');
+    } catch (\Exception $e) {
+        return response([
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});

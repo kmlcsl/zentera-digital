@@ -49,7 +49,7 @@
                                     @if ($product->show_price && $product->price)
                                         <div class="mb-4">
                                             <span
-                                                class="text-2xl font-bold text-green-600">{{ $product->formatted_price }}</span>
+                                                class="text-xl font-bold text-green-600">{{ $product->formatted_price }}</span>
                                             @if ($product->original_price)
                                                 <span
                                                     class="text-gray-500 line-through ml-2">{{ $product->formatted_original_price }}</span>
@@ -127,6 +127,7 @@
             @endif
 
             <!-- Document Services -->
+            <!-- Document Services -->
             @if ($products['documents']->count() > 0)
                 <div class="mb-16">
                     <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">
@@ -164,10 +165,11 @@
                                         </div>
                                     @endif
 
-                                    <a href="{{ $product->whatsapp_url }}" target="_blank"
+                                    {{-- Dynamic Button berdasarkan has_upload_page --}}
+                                    <a href="{{ $product->action_url }}" target="{{ $product->action_target }}"
                                         class="block w-full bg-gradient-to-r {{ $product->color }} text-white py-2 px-4 rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-300 text-center">
-                                        <i class="fab fa-whatsapp mr-2"></i>
-                                        {{ $product->show_price && $product->price ? 'Chat Sekarang' : 'Tanya Harga' }}
+                                        <i class="{{ $product->action_button_icon }} mr-2"></i>
+                                        {{ $product->action_button_text }}
                                     </a>
                                 </div>
                             </div>

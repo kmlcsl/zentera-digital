@@ -24,7 +24,9 @@ class Product extends Model
         'service_note',
         'is_active',
         'is_featured',
-        'sort_order'
+        'sort_order',
+        'has_upload_page',
+        'upload_route'
     ];
 
     protected $casts = [
@@ -32,8 +34,9 @@ class Product extends Model
         'show_price' => 'boolean',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'has_upload_page' => 'boolean',
         'price' => 'decimal:0',
-        'original_price' => 'decimal:0'
+        'original_price' => 'decimal:0',
     ];
 
     /**
@@ -138,5 +141,53 @@ class Product extends Model
             return implode("\n", $this->features);
         }
         return $this->features ?? '';
+    }
+
+    /**
+     * Get URL untuk button action (WhatsApp atau Upload Page)
+     */
+    public function getActionUrlAttribute()
+    {
+        if ($this->has_upload_page && $this->upload_route && $this->show_price && $this->price) {
+            return route($this->upload_route);
+        }
+
+        return $this->whatsapp_url;
+    }
+
+    /**
+     * Get button text berdasarkan action type
+     */
+    public function getActionButtonTextAttribute()
+    {
+        if ($this->has_upload_page && $this->show_price && $this->price) {
+            return 'Upload Dokumen';
+        }
+
+        return $this->show_price && $this->price ? 'Chat Sekarang' : 'Tanya Harga';
+    }
+
+    /**
+     * Get button icon
+     */
+    public function getActionButtonIconAttribute()
+    {
+        if ($this->has_upload_page && $this->show_price && $this->price) {
+            return 'fas fa-upload';
+        }
+
+        return 'fab fa-whatsapp';
+    }
+
+    /**
+     * Check if should open in new tab
+     */
+    public function getActionTargetAttribute()
+    {
+        if ($this->has_upload_page && $this->show_price && $this->price) {
+            return '_self'; // Same tab for upload pages
+        }
+
+        return '_blank'; // New tab for WhatsApp
     }
 }

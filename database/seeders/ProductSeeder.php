@@ -133,7 +133,6 @@ class ProductSeeder extends Seeder
             'color' => 'red',
             'whatsapp_text' => 'Halo, saya butuh Cek Plagiarisme Turnitin (Rp 5.000)',
             'show_price' => true,
-            'is_features' => 1,
             'sort_order' => 3
         ]);
 

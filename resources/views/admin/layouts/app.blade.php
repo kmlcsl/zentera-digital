@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Panel') - Zentera Digital</title>
 
     <!-- Tailwind CSS -->
@@ -126,7 +127,18 @@
                             onclick="closeMobileSidebar()">
                             <i class="fas fa-shopping-cart mr-3 w-5"></i>
                             <span>Pesanan</span>
-                            <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">8</span>
+                            @php
+                                try {
+                                    $pendingCount = \App\Models\Order::where('payment_status', 'pending')->count();
+                                } catch (\Exception $e) {
+                                    $pendingCount = 0;
+                                }
+                            @endphp
+                            @if($pendingCount > 0)
+                                <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                                    {{ $pendingCount }}
+                                </span>
+                            @endif
                         </a>
                     </li>
                     <li>
@@ -154,7 +166,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="https://wa.me/{{ config('app.whatsapp_number', '6281330053572') }}" target="_blank"
+                            <a href="https://wa.me/{{ config('app.whatsapp_number', '6281330053572') }}"
+                                target="_blank"
                                 class="flex items-center px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                                 <i class="fab fa-whatsapp mr-3 text-sm w-5"></i>
                                 <span class="text-sm">WhatsApp</span>

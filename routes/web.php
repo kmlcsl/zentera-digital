@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
+use App\Http\Controllers\DocumentUploadController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController; // Admin ProductController
@@ -23,6 +25,23 @@ use App\Http\Controllers\Admin\SettingController;
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/products', [ProductController::class, 'index'])->name('products');
+
+// Document Upload Routes
+Route::prefix('documents')->name('documents.')->group(function () {
+    Route::get('/upload/repair', [DocumentUploadController::class, 'repairForm'])->name('upload.repair');
+    Route::get('/upload/format', [DocumentUploadController::class, 'formatForm'])->name('upload.format');
+    Route::get('/upload/plagiarism', [DocumentUploadController::class, 'plagiarismForm'])->name('upload.plagiarism');
+
+    Route::post('/upload/repair', [DocumentUploadController::class, 'repairSubmit'])->name('upload.repair.submit');
+    Route::post('/upload/format', [DocumentUploadController::class, 'formatSubmit'])->name('upload.format.submit');
+    Route::post('/upload/plagiarism', [DocumentUploadController::class, 'plagiarismSubmit'])->name('upload.plagiarism.submit');
+});
+
+// Payment Routes
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::get('/{orderNumber}', [PaymentController::class, 'show'])->name('show');
+    Route::post('/{orderNumber}/confirm', [PaymentController::class, 'confirm'])->name('confirm');
+});
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -62,6 +81,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::get('filter', [OrderController::class, 'filter'])->name('filter'); // NEW
             Route::get('create', [OrderController::class, 'create'])->name('create');
             Route::post('/', [OrderController::class, 'store'])->name('store');
             Route::get('{id}', [OrderController::class, 'show'])->name('show');
@@ -69,8 +89,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('{id}', [OrderController::class, 'update'])->name('update');
             Route::delete('{id}', [OrderController::class, 'destroy'])->name('destroy');
 
-            // AJAX Actions
-            Route::post('{id}/update-status', [OrderController::class, 'updateStatus'])->name('update-status');
+            // NEW AJAX Routes untuk DocumentOrder
+            Route::get('{id}/details', [OrderController::class, 'getOrderDetails'])->name('details');
+            Route::post('{id}/update-payment-status', [OrderController::class, 'updatePaymentStatus'])->name('update-payment-status');
+            Route::get('{id}/download/{type}', [OrderController::class, 'downloadFile'])->name('download-file');
+            Route::get('export', [OrderController::class, 'export'])->name('export'); // NEW
         });
 
         // Settings Management

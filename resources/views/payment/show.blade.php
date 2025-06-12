@@ -116,11 +116,12 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Bank BSI -->
+                        <!-- Bank BSI -->
                         <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 transition-colors">
                             <div class="text-center mb-4">
-                                <div
-                                    class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-university text-blue-600 text-xl"></i>
+                                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 bg-white">
+                                    <img src="{{ asset('payments/bsi.png') }}" alt="Bank BSI"
+                                        class="w-full h-full object-cover rounded-full">
                                 </div>
                                 <h3 class="font-bold text-gray-800">{{ $bankAccounts['bsi']['name'] }}</h3>
                             </div>
@@ -148,11 +149,12 @@
                         <!-- DANA -->
                         <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-green-500 transition-colors">
                             <div class="text-center mb-4">
-                                <div
-                                    class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <i class="fas fa-mobile-alt text-green-600 text-xl"></i>
+                                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 bg-white">
+                                    <!-- Tambahkan latar belakang -->
+                                    <img src="{{ asset('payments/dana.png') }}" alt="Dana"
+                                        class="w-12 h-12 object-cover rounded-full"> <!-- Ukuran gambar disesuaikan -->
                                 </div>
-                                <h3 class="font-bold text-gray-800">{{ $bankAccounts['dana']['name'] }}</h3>
+                                <h3 class="font-bold text-gray-800 text-sm">{{ $bankAccounts['dana']['name'] }}</h3>
                                 <span class="text-xs text-red-500">(QRIS dalam maintenance)</span>
                             </div>
 

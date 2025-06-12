@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
@@ -46,14 +48,51 @@ Route::prefix('payment')->name('payment.')->group(function () {
 });
 
 // Admin Routes
+// Admin Routes - INLINE SOLUTION
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Auth Routes (Login/Logout) - LANGSUNG pakai Controller
-    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    // Auth Routes (Inline - tanpa AuthController)
+    Route::get('login', function () {
+        return view('admin.auth.login');
+    })->name('login');
 
-    // Protected Admin Routes (harus login dulu)
+    Route::post('login', function (Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        try {
+            $admin = \App\Models\AdminUser::where('email', $request->email)
+                ->where('is_active', true)
+                ->first();
+
+            if ($admin && Hash::check($request->password, $admin->password)) {
+                Session::put('admin_logged_in', true);
+                Session::put('admin_id', $admin->id);
+                Session::put('admin_name', $admin->name);
+                Session::put('admin_email', $admin->email);
+                Session::put('admin_role', $admin->role);
+
+                $admin->updateLastLogin($request->ip());
+
+                return redirect()->route('admin.dashboard')
+                    ->with('success', 'Login berhasil! Selamat datang ' . $admin->name);
+            }
+
+            return back()->withErrors(['login' => 'Email atau password salah!'])
+                ->withInput($request->only('email'));
+        } catch (\Exception $e) {
+            return back()->withErrors(['login' => 'Terjadi kesalahan sistem.']);
+        }
+    });
+
+    Route::post('logout', function () {
+        Session::forget(['admin_logged_in', 'admin_id', 'admin_name', 'admin_email', 'admin_role']);
+        return redirect()->route('admin.login')->with('success', 'Logout berhasil!');
+    })->name('logout');
+
+    // Protected routes tetap sama...
     Route::middleware(['admin'])->group(function () {
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -218,7 +257,7 @@ Route::get('/debug-error', function () {
 
     // Test controller
     try {
-        $controller = app(\App\Http\Controllers\Admin\AuthController::class);
+        $controller = app(App\Http\Controllers\Admin\AuthController::class);
     } catch (Exception $e) {
         $errors['controller_error'] = $e->getMessage();
     }

@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
 use App\Http\Controllers\DocumentUploadController;
@@ -107,26 +106,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-// Fallback route for 404
-Route::fallback(function () {
-    return redirect()->route('home');
-});
-
-Route::get('/debug-storage', function () {
-    return response()->json([
-        'storage_path' => storage_path('app/public'),
-        'public_storage' => public_path('storage'),
-        'storage_exists' => file_exists(storage_path('app/public')),
-        'public_link_exists' => file_exists(public_path('storage')),
-        'is_link' => is_link(public_path('storage')),
-        'writable' => is_writable(storage_path('app')),
-        'env' => config('app.env'),
-        'url' => url('/storage'),
-        'asset_url' => asset('storage'),
-    ]);
-});
-
-// Tambahkan di routes/web.php
+// Storage access route for Vercel (karena tidak ada symlink)
 Route::get('/storage/{path}', function ($path) {
     $filePath = storage_path('app/public/' . $path);
 
@@ -142,26 +122,7 @@ Route::get('/storage/{path}', function ($path) {
     ]);
 })->where('path', '.*');
 
-
-// Debug route untuk cek controller
-Route::get('/debug-plagiarism', function () {
-    try {
-        $controller = app()->make(App\Http\Controllers\DocumentUploadController::class);
-        $product = \App\Models\Product::where('name', 'Cek Plagiarisme Turnitin')->first();
-
-        return response()->json([
-            'controller_exists' => true,
-            'method_exists' => method_exists($controller, 'plagiarismForm'),
-            'product_found' => $product ? true : false,
-            'product_data' => $product,
-            'all_products' => \App\Models\Product::all(['name', 'upload_route']),
-            'database_connected' => DB::connection()->getPdo() ? true : false,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage(),
-            'line' => $e->getLine(),
-            'file' => $e->getFile()
-        ]);
-    }
+// Fallback route for 404
+Route::fallback(function () {
+    return redirect()->route('home');
 });

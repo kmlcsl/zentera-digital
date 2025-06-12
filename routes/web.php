@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
 use App\Http\Controllers\DocumentUploadController;
@@ -140,3 +141,27 @@ Route::get('/storage/{path}', function ($path) {
         'Cache-Control' => 'public, max-age=31536000',
     ]);
 })->where('path', '.*');
+
+
+// Debug route untuk cek controller
+Route::get('/debug-plagiarism', function () {
+    try {
+        $controller = app()->make(App\Http\Controllers\DocumentUploadController::class);
+        $product = \App\Models\Product::where('name', 'Cek Plagiarisme Turnitin')->first();
+
+        return response()->json([
+            'controller_exists' => true,
+            'method_exists' => method_exists($controller, 'plagiarismForm'),
+            'product_found' => $product ? true : false,
+            'product_data' => $product,
+            'all_products' => \App\Models\Product::all(['name', 'upload_route']),
+            'database_connected' => DB::connection()->getPdo() ? true : false,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ]);
+    }
+});

@@ -18,10 +18,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         try {
-            // Force HTTPS untuk production
-            if (config('app.env') === 'production' || request()->header('x-forwarded-proto') === 'https') {
+            // Force HTTPS untuk production dengan proxy support
+            if (config('app.env') === 'production') {
                 URL::forceScheme('https');
                 $this->app['request']->server->set('HTTPS', true);
+                $this->app['request']->server->set('SERVER_PORT', 443);
+
+                // Untuk Vercel/proxy headers
+                if (request()->header('x-forwarded-proto') === 'https') {
+                    $this->app['request']->server->set('HTTPS', 'on');
+                }
             }
 
             // Fix storage URL untuk production (Vercel)

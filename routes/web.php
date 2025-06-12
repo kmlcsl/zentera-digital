@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController; // Public ProductController
 use App\Http\Controllers\DocumentUploadController;
@@ -184,12 +185,43 @@ Route::get('/admin/debug-login', function () {
     }
 });
 
-// Temporary debug route
 Route::get('/debug-admin', function () {
+    $dbConnected = false;
+    try {
+        DB::connection()->getPdo();
+        $dbConnected = true;
+    } catch (Exception $e) {
+        $dbConnected = false;
+    }
+
+    $providersLoaded = false;
+    try {
+        $providersLoaded = !empty(app()->getLoadedProviders());
+    } catch (Exception $e) {
+        $providersLoaded = false;
+    }
+
+    $adminRouteExists = false;
+    try {
+        $adminRouteExists = Route::has('admin.login');
+    } catch (Exception $e) {
+        $adminRouteExists = false;
+    }
+
     return [
-        'controller_exists' => class_exists(\App\Http\Controllers\Admin\AuthController::class),
+        'controller_exists' => class_exists(App\Http\Controllers\Admin\AuthController::class),
         'view_exists' => view()->exists('admin.auth.login'),
         'session_driver' => config('session.driver'),
         'app_env' => app()->environment(),
+        'app_debug' => config('app.debug'),
+        'db_connected' => $dbConnected,
+        'storage_writable' => is_writable(storage_path()),
+        'providers_loaded' => $providersLoaded,
+        'auth_guard_admin' => config('auth.guards.admin') !== null,
+        'vercel_env' => env('VERCEL_ENV', false),
+        'https_enabled' => request()->secure(),
+        'admin_routes_loaded' => $adminRouteExists,
+        'csrf_enabled' => config('app.key') !== null,
+        'debug_time' => now()->toDateTimeString(),
     ];
 });

@@ -48,27 +48,13 @@ Route::prefix('payment')->name('payment.')->group(function () {
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Auth Routes (Login/Logout) - TANPA MIDDLEWARE
-    Route::get('login', function () {
-        try {
-            return app(App\Http\Controllers\Admin\AuthController::class)->showLoginForm();
-        } catch (\Exception $e) {
-            Log::error('Admin login route error: ' . $e->getMessage());
-            return response()->view('errors.500', [], 500);
-        }
-    })->name('login');
-
-    Route::post('login', [App\Http\Controllers\Admin\AuthController::class, 'login']);
-    Route::post('logout', [App\Http\Controllers\Admin\AuthController::class, 'logout'])->name('logout');
-
-    // Auth Routes (Login/Logout)
-    // Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-    // Route::post('login', [AuthController::class, 'login']);
-    // Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    // Auth Routes (Login/Logout) - LANGSUNG pakai Controller
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     // Protected Admin Routes (harus login dulu)
     Route::middleware(['admin'])->group(function () {
-
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard', [DashboardController::class, 'index']);

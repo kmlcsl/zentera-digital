@@ -110,3 +110,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::fallback(function () {
     return redirect()->route('home');
 });
+
+Route::get('/debug-storage', function () {
+    return response()->json([
+        'storage_path' => storage_path('app/public'),
+        'public_storage' => public_path('storage'),
+        'storage_exists' => file_exists(storage_path('app/public')),
+        'public_link_exists' => file_exists(public_path('storage')),
+        'is_link' => is_link(public_path('storage')),
+        'writable' => is_writable(storage_path('app')),
+        'env' => config('app.env'),
+        'url' => url('/storage'),
+        'asset_url' => asset('storage'),
+    ]);
+});

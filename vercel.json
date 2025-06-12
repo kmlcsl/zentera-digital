@@ -73,7 +73,7 @@
     },
     "build": {
         "env": {
-            "COMPOSER_FLAGS": "--no-dev"
+            "COMPOSER_FLAGS": "--no-dev --optimize-autoloader"
         }
     }
 }
